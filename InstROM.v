@@ -4,7 +4,7 @@
 // Revision Fall 2020
 // Based on SystemVerilog source code provided by John Eldon
 // Comment:
-// This module is your Instruction Memory
+// This module is your instruction Memory
 // At the begin of the program, it reads instructions from machine_code.txt
 // Please make sure you have the file ready.
 // You may hardcode instruction for debugging purposes. 
@@ -19,7 +19,7 @@ module InstROM (inst_address, inst_out) ;
   output reg[8:0] inst_out;
 	 
 
-// Instruction format: {4bit opcode, 3bit rs or rt, 3bit rt, immediate, or branch target}
+// instruction format: {4bit opcode, 3bit rs or rt, 3bit rt, immediate, or branch target}
 	 
 //  always_comb 
 //	case (inst_address)

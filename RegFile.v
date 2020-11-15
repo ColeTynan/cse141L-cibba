@@ -11,13 +11,14 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (clk,write_en,RaddrA,RaddrB,Waddr,data_in,data_out_a,data_out_b);
+module RegFile (clk,branch_en, write_en,r_addr_a,r_addr_b,w_addr,data_in,data_out_a,data_out_b);
 	parameter W=8, D=4;  // W = data path width (Do not change); D = pointer width (You may change)
 	input                clk,
+						 branch_en,
 						 write_en;
-	input        [D-1:0] RaddrA,				  // address pointers
-						 RaddrB,
-						 Waddr;
+	input        [D-1:0] r_addr_a,				  // address pointers
+						 r_addr_b,
+						 w_addr;
 	input        [W-1:0] data_in;
 	output reg   [W-1:0] data_out_a;			  
 	output reg   [W-1:0] data_out_b;				
@@ -33,13 +34,13 @@ reg [W-1:0] Registers[(2**D)-1:0];	  // or just registers[16-1:0] if we know D=4
 
 always@*
 begin
- data_out_a = Registers[RaddrA];	  
- data_out_b = Registers[RaddrB];    
+ data_out_a = branch_en  ? Registers[8'd7] : Registers[r_addr_a]; //if branch_Enable is high, use the comparison register 
+ data_out_b = branch_en  ? Registers[8'd0] : Registers[r_addr_b];    
 end
 
 // sequential (clocked) writes 
 always @ (posedge clk)
   if (write_en)	                             // works just like data_memory writes
-    Registers[Waddr] <= data_in;
+    Registers[w_addr] <= data_in;
 
 endmodule

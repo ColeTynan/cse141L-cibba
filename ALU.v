@@ -1,41 +1,50 @@
 // Module Name:    ALU 
-// Project Name:   CSE141L
+// Project Name:   CSE141L 
 //
 // Revision Fall 2020
+// Student: Cole W. Tynan-Wood
 // Based on SystemVerilog source code provided by John Eldon
 // Comment:
 // 
 
 
 	 
-module ALU(InputA,InputB,OP,Out,Zero);
+module ALU(input_a,input_b,OP,out,zero);
 
-	input [ 7:0] InputA;
-	input [ 7:0] InputB;
-	input [ 2:0] OP;
-	output reg [7:0] Out; // logic in SystemVerilog
-	output reg Zero;
+	input [7:0] input_a;
+	input [7:0] input_b;
+	input [2:0] OP;
+	output reg [7:0] out; // logic in SystemVerilog
+	output reg zero;
 
+	/* Opcodes
+	000: stp (halt)
+	001: shf
+	011: nor
+	010: bneg
+	110: st
+	100: add
+	101: addi
+	111: ld
+	*/
 	always@* // always_comb in systemverilog
 	begin 
-		Out = 0;
-		case (OP)
-		3'b000: Out = InputA + InputB; // ADD
-		3'b001: Out = InputA & InputB; // AND
-		3'b010: Out = InputA | InputB; // OR
-		3'b011: Out = InputA ^ InputB; // XOR
-		3'b100: Out = InputA << 1;				// Shift left
-		3'b101: Out = {1'b0,InputA[7:1]};   // Shift right
-		default: Out = 0;
+		out = 0;
+		casex (OP)
+		3'b1xx: out = input_a + input_b; // All R-type operations (besides shift)
+		3'b011: out = !(input_a | input_b); // Nor
+		3'b001: out = (input_b[3] == 1'b0) ? input_a << input_b[3:0] : input_a >>> input_b[3:0]  ;				// Shift 
+		3'b010: out = (input_a < 8'b0) ? 8'b0 : 8'b1;
+		default: out = 0;
 	  endcase
 	
 	end 
 
-	always@*							  // assign Zero = !Out;
+	always@*							  // assign zero = !out;
 	begin
-		case(Out)
-			'b0     : Zero = 1'b1;
-			default : Zero = 1'b0;
+		case(out)
+			'b0     : zero = 1'b1;
+			default : zero = 1'b0;
       endcase
 	end
 

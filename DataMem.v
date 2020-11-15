@@ -5,45 +5,45 @@
 // Based on SystemVerilog source code provided by John Eldon
 // Comment:
 // This module is your Data memory
-// Similar to Instruction Memory, you may have a text file as your memory.
+// Similar to instruction Memory, you may have a text file as your memory.
 // You may hard code values into your memory. 
-// Ex. If you just want the value 5 in memory 244 and 254 at position 16 when the program start,
+// Ex. If you just want the value 5 in memory 244 and 254 at position 16 when the progrghgam start,
 // you may do so below.
 
-module DataMem(clk,Reset,write_en,DataAddress,data_in,DataOut);
+module DataMem(clk,reset,write_en,data_address,data_in,data_out);
   input              clk,
-                     Reset,
+                     reset,
                      write_en;
-  input [7:0]        DataAddress,   // 8-bit-wide pointer to 256-deep memory
+  input [7:0]        data_address,   // 8-bit-wide pointer to 256-deep memory
                      data_in;		   // 8-bit-wide data path, also
-  output reg[7:0]    DataOut;
+  output reg[7:0]    data_out;
 
-  reg [7:0] Core[256-1:0];			   // 8x256 two-dimensional array -- the memory itself
+  reg [7:0] core[256-1:0];			   // 8x256 two-dimensional array -- the memory itself
 
   integer i;
 /* optional way to plant constants into DataMem at startup
     initial 
-      $readmemh("dataram_init.list", Core);
+      $readmemh("dataram_init.list", core);
 */
   always@*                    // reads are combinational
   begin
-    DataOut = Core[DataAddress];
+    data_out = core[data_address];
   end
   
   always @ (posedge clk)		 // writes are sequential
-/*( Reset response is needed only for initialization (see inital $readmemh above for another choice)
-  if you do not need to preload your data memory with any constants, you may omit the if(Reset) and the else,
+/*( reset response is needed only for initialization (see inital $readmemh above for another choice)
+  if you do not need to preload your data memory with any constants, you may omit the if(reset) and the else,
   and go straight to if(write_en) ...
 */
 	begin
-    if(Reset) begin
+    if(reset) begin
 // you may initialize your memory w/ constants, if you wish
       for(i=0;i<256;i = i + 1)
-	      Core[i] <= 0;
-      Core[ 16] <= 254;          // overrides the 0  ***sample only***
-      Core[244] <= 5;			   //    likewise
+	      core[i] <= 0;
+      core[ 16] <= 254;          // overrides the 0  ***sample only***
+      core[244] <= 5;			   //    likewise
 	end
     else if(write_en) 
-      Core[DataAddress] <= data_in;
+      core[data_address] <= data_in;
 	end
 endmodule
