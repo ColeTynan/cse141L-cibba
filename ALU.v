@@ -31,10 +31,11 @@ module ALU(input_a,input_b,OP,out,zero);
 	begin 
 		out = 0;
 		casex (OP)
-		3'b1xx: out = input_a + input_b; // All R-type operations (besides shift)
-		3'b011: out = !(input_a | input_b); // Nor
-		3'b001: out = (input_b[3] == 1'b0) ? input_a << input_b[3:0] : input_a >>> input_b[3:0]  ;				// Shift 
-		3'b010: out = (input_a < 8'b0) ? 8'b0 : 8'b1;
+		3'b11x: out = input_b;			 //ld/st
+		3'b10x: out = input_a + input_b; // add operations
+		3'b011: out = ~(input_a | input_b); // Nor
+		3'b001: out = (input_b[3] == 1'b0) ? input_a << input_b[3:0] : input_a >> (~input_b[3:0] + 1'b1) ;				// Shift 
+		3'b010: out = (input_a[7] == 1) ? 8'b0 : 8'b1; //bneg
 		default: out = 0;
 	  endcase
 	
